@@ -8,6 +8,13 @@ The SIP Parser is a Go-based application designed to read and validate text file
 - Validates the structure and content of SIP messages.
 - Provides feedback on the validity of the messages.
 
+## Developer Features
+- uses bufio.Scanner with a []byte Buffer for line-by-line reading with a custom Split function
+- processes the message in a single pass
+- handles multi-line headers
+- concurrent parsing for multiple messages
+- using sync.Pool to reuse message structures
+
 ## Installation
 1. Ensure you have Go installed on your machine. You can download it from [here](https://golang.org/dl/).
 2. Clone the repository:
