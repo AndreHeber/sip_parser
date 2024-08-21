@@ -148,6 +148,88 @@ func ParseSIP(reader io.Reader) (*SIPMessage, error) {
 	lineNumber++
 	// fmt.Println(msg.StartLine)
 
+	// Format of the start line
+	// Request-Line  =  Method SP Request-URI SP SIP-Version CRLF
+	// Method        =  INVITE / ACK / OPTIONS / CANCEL / BYE / REGISTER / REFER / MESSAGE / extension-method
+	// SP			=  "[<>]"
+	// Request-URI   =  SIP-URI / SIPS-URI / absoluteURI
+	// SIP-Version   =  "SIP" "/" 1*DIGIT "." 1*DIGIT
+	// CRLF			=  "\r\n"
+	// SIP-URI       =  "sip:" [ userinfo "@" ] hostport
+	// SIPS-URI      =  "sips:" [ userinfo "@" ] hostport
+	// userinfo      =  ( unreserved / escaped / user / password ) *( ";" param )
+	// user          =  *( unreserved / escaped / user-unreserved )
+	// password      =  *( unreserved / escaped / password-unreserved )
+	// hostport      =  host [ ":" port ]
+	// host          =  hostname / IPv4address / IPv6reference
+	// hostname      =  *( domainlabel "." ) toplabel [ "." ]
+	// domainlabel   =  alphanum / alphanum *( alphanum / "-" ) alphanum
+	// toplabel      =  ALPHA / ALPHA *( alphanum / "-" ) alphanum
+	// IPv4address   =  1*digit "." 1*digit "." 1*digit "." 1*digit
+	// IPv6reference =  "[" IPv6address "]"
+	// IPv6address   =  hexpart [ ":" IPv4address ]
+	// hexpart       =  hexseq / hexseq "::" [ hexseq ] / "::" [ hexseq ]
+	// hexseq        =  hex4 *( ":" hex4)
+	// hex4          =  1*4HEXDIG
+	// port          =  1*DIGIT
+	// param         =  pname [ "=" pvalue ]
+	// pname         =  pname-value *( ";" pname-value )
+	// pname-value   =  token / quoted-string
+	// pvalue        =  token / quoted-string
+	// token         =  1*alphanum
+	// quoted-string =  DQUOTE *( qdtext / quoted-pair ) DQUOTE
+	// qdtext        =  LWS / %x21 / %x23-5B / %x5D-7E / UTF8-NONASCII
+	// quoted-pair   =  "\" (%x00-09 / %x0B-0C / %x0E-7F)
+	// LWS           =  [*WSP CRLF] 1*WSP
+	// WSP           =  SP / HTAB
+	// Status-Line   =  SIP-Version SP Status-Code SP Reason-Phrase CRLF
+	// Reason-Phrase =  *(reserved / unreserved / escaped / UTF8-NONASCII / UTF8-CONT / SP / HTAB)
+	// Status-Code   =  Informational / Redirection / Success / Client-Error / Server-Error
+	// Informational =  1*DIGIT
+	// Redirection   =  3DIGIT
+	// Success       =  2DIGIT
+	// Client-Error  =  4DIGIT
+	// Server-Error  =  5DIGIT
+	// unreserved    =  alphanum / mark
+	// mark          =  "-" / "_" / "." / "!" / "~" / "*" / "'" / "(" / ")"
+	// escaped       =  "%" HEXDIG HEXDIG
+	// alphanum      =  ALPHA / DIGIT
+	// ALPHA         =  %x41-5A / %x61-7A
+	// DIGIT         =  %x30-39
+	// HEXDIG        =  DIGIT / "A" / "B" / "C" / "D" / "E" / "F"
+	// UTF8-NONASCII =  %x80-FF
+	// UTF8-CONT     =  %x80-BF
+	// HEXDIG        =  DIGIT / "A" / "B" / "C" / "D" / "E" / "F"
+	// parse the start line
+	parts := strings.Split(msg.StartLine, " ")
+	if len(parts) != 3 {
+		return nil, fmt.Errorf("invalid start line: %s, not 3 parts, linenumber: %d", msg.StartLine, lineNumber)
+	}
+
+	if parts[2] == "SIP/2.0" {
+		return nil, fmt.Errorf("invalid start line: %s, not SIP/2.0, linenumber: %d", msg.StartLine, lineNumber)
+	}
+
+	if parts[0] == "INVITE" {
+		fmt.Println("INVITE")
+	} else if parts[0] == "ACK" {
+		fmt.Println("ACK")
+	} else if parts[0] == "OPTIONS" {
+		fmt.Println("OPTIONS")
+	} else if parts[0] == "CANCEL" {
+		fmt.Println("CANCEL")
+	} else if parts[0] == "BYE" {
+		fmt.Println("BYE")
+	} else if parts[0] == "REGISTER" {
+		fmt.Println("REGISTER")
+	} else if parts[0] == "REFER" {
+		fmt.Println("REFER")
+	} else if parts[0] == "MESSAGE" {
+		fmt.Println("MESSAGE")
+	} else {
+		fmt.Println("extension-method")
+	}
+
 	// Parse headers
 	for scanner.Scan() {
 		lineNumber++
